@@ -1,9 +1,0 @@
-
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <meta-data
-        android:name="com.google.android.geo.API_KEY"
-        android:value="AIzaSyDrdtA9psBU2AGm0Nqd8GV8XlTOPcHRv28"/>
-
-</manifest>

@@ -10,7 +10,8 @@ declare class GMSPlacePickerViewControllerDelegate extends NSObject {};
 declare class GMSPlace extends NSObject {
     public name: any;
     public placeID: any;
-    public formattedAddress: any
+    public formattedAddress: any;
+    public attributions: any;
 };
 
 declare class GMSPlacePickerViewController extends UIViewController {
@@ -57,7 +58,8 @@ class PlacePickerViewDelegateImpl extends NSObject implements GMSPlacePickerView
         owner.placePicked({
             name: place.name,
             id: place.placeID,
-            address: place.formattedAddress
+            address: place.formattedAddress,
+            attributions: place.attributions
         });
     }
 

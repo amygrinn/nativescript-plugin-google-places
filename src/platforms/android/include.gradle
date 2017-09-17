@@ -1,16 +1,27 @@
-/* Include.gradle configuration: http://docs.nativescript.org/plugins/plugins#includegradle-specification */
+android {
+    productFlavors {
+        "places" {
+            dimension "places"
+        }
+    }
+}
+
+repositories {
+    jcenter()
+    mavenCentral()
+    maven {
+        url "https://maven.google.com" // Google's Maven repository
+    }
+}
 
 android {
-	productFlavors {
-		"nativescript-plugin-google-places" {
-			dimension "nativescript-plugin-google-places"
-		}
-	}
+    defaultConfig {
+        multiDexEnabled true
+    }
 }
 
 dependencies {
 	def googlePlayServicesVersion = project.hasProperty('googlePlayServicesVersion') ? project.googlePlayServicesVersion: "11.2.2"
     compile "com.google.android.gms:play-services:$googlePlayServicesVersion"
+	compile 'com.android.support:multidex:1.0.1'
 }
-
-apply plugin: "com.google.gms.google-services"

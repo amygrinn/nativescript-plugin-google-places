@@ -199,12 +199,15 @@ function addAndroidKey(key, location) {
         fs.writeFileSync('./platforms/android/AndroidManifest.xml',
 
 `
-<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>    
 
-    <meta-data
-        android:name="com.google.android.geo.API_KEY"
-        android:value="${key}"/>
+    <application>
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${key}"/>
+    </application>
 
 </manifest>
 `

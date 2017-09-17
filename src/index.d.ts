@@ -3,7 +3,8 @@ export function init(): void;
 export interface Place {
     id: string,
     name: string,
-    address: string
+    address: string,
+    attributions: string
 }
 
 export interface Location {
