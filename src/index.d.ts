@@ -1,6 +1,19 @@
-import { Common } from './plugin-google-places.common';
-export declare class PluginGooglePlaces extends Common {
-  // define your typings manually
-  // or..
-  // take the ios or android .d.ts files and copy/paste them here
+export function init(): void;
+
+export interface Place {
+    id: string,
+    name: string,
+    address: string
 }
+
+export interface Location {
+    latitude: number;
+    longitude: number
+}
+
+export interface Viewport {
+    southWest: Location;    
+    northEast: Location;
+}
+
+export function pickPlace(viewport?: Viewport): Promise<Place>;

@@ -1,0 +1,13 @@
+<!-- https://docs.nativescript.org/angular/core-concepts/angular-navigation.html#page-router-outlet 
+<page-router-outlet></page-router-outlet>
+-->
+
+<StackLayout>
+    <Button text="Pick place" (tap)="pickPlace()"></Button>
+    <StackLayout *ngIf="place">
+        <Label text="You picked:"></Label>
+        <Label [text]="place.name"></Label>
+        <Label [text]="place.address"></Label>
+        <Label [text]="'ID: ' + place.id"></Label>
+    </StackLayout>
+</StackLayout>
