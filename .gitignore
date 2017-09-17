@@ -22,3 +22,4 @@ publish/src
 publish/package
 demo-ng/report/report.html
 demo-ng/report/stats.json
+demo-ng/google-places.config.json
