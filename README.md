@@ -71,8 +71,6 @@ GooglePlaces.pickPlace(viewport)
 
 ## API
 
-Describe your plugin methods and properties here. See [nativescript-feedback](https://github.com/EddyVerbruggen/nativescript-feedback) for example.
-
 | Place  |||
 | --- | --- | --- |
 | name | string | The name of the place |

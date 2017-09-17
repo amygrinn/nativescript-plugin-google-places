@@ -1,6 +1,6 @@
 {
   "name": "nativescript-plugin-google-places",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Choose a place using Google Place Picker",
   "main": "plugin-google-places",
   "typings": "index.d.ts",
@@ -22,7 +22,7 @@
     "plugin.prepare": "npm run tsc && cd ../demo-ng && tns plugin remove nativescript-plugin-google-places && tns plugin add ../src",
     "clean": "cd ../demo-ng && rimraf hooks node_modules platforms && cd ../src && rimraf node_modules && npm run plugin.link",
     "ci.tslint": "npm i && tslint '**/*.ts' --config '../tslint.json' --exclude '**/node_modules/**'",
-    "prepublish": "npm install --ignore-scripts && webpack --config scripts/webpack.config.js scripts/installer.js scripts/postinstall.js",
+    "build-scripts": "npm install --ignore-scripts && webpack --config scripts/webpack.config.js scripts/installer.js scripts/postinstall.js",
     "postinstall": "node scripts/postinstall.js",
     "configure": "rimraf ../../google-places.nativescript.json && npm run postinstall"
   },
@@ -59,6 +59,10 @@
   },
   "dependencies": {
     "rimraf": "^2.5.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tylergrinn/nativescript-plugin-google-places.git"
   },
   "bootstrapper": "nativescript-plugin-seed"
 }
