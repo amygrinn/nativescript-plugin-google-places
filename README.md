@@ -17,6 +17,10 @@ Nativescript plugin for [Google Places API](https://developers.google.com/places
 cd node_modules/nativescript-plugin-google-places && npm run configure
 ```
 
+#### v1.2.0
+* Added ```getPlacesById(id: string[]): Place[]```
+* Fixed Android error where place returned by placepicker would not have all of the info
+
 ## Prerequisites
 
 Set up Google Places before installing, the setup script will ask for an API key for iOS and Android. 
