@@ -35,7 +35,7 @@ export function getPlacesById(ids: string[]): Promise<Place[]> {
             if(ids.length === 0) {
                 resolve(places);
             } else {
-                client.lookUpPlaceIDCallback(ids.pop(), (place: GMSPlace, error) => {
+                client.lookUpPlaceIDCallback(ids.shift(), (place: GMSPlace, error) => {
                     if(!place) {
                         reject(error);
                     } else {

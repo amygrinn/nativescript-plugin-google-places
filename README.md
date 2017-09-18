@@ -21,6 +21,13 @@ cd node_modules/nativescript-plugin-google-places && npm run configure
 * Added ```getPlacesById(id: string[]): Place[]```
 * Fixed Android error where place returned by placepicker would not have all of the info
 
+#### v1.2.1
+* Fixed setup error where ios keys were not being replaced after reconfiguring
+* Fixed getPlacesById error where ios results were being returned in reverse order
+* Added error handling to Android for getPlacesById if not all places can be found
+
+Now you can be sure the places array you get from getPlacesById has the same number of elements and is in the same order as the ids you send it.
+
 ## Prerequisites
 
 Set up the Google Places API keys before installing this plugin, the setup script will ask 
@@ -101,7 +108,7 @@ GooglePlaces.getPlacesById([
 
 ## Best Practices
 
-* Google recommends always displaying the attributions string when using the Place data.
+* Google recommends always displaying the attributions string, when available, when using the Place data.
 * Google requires the "Powered by Google" picture next to Place data whenever the data is used outside of the map.
 	The picture is installed by the plugin if you allow it to during the setup script.
 

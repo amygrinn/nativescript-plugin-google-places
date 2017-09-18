@@ -126,7 +126,7 @@ function addAndroidKey(key, location) {
 `
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>    
+    ${location ? '<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>' : ''}   
 
     <application>
         <meta-data
@@ -145,17 +145,21 @@ function addAndroidKey(key, location) {
 
 function addIosKey(key, location, images) {
 
-    var newIosFile = fs.readFileSync('./plugin-google-places.ios.js').toString().replace(/__API_KEY__/g, key);
+    let iosSource = './plugin-google-places.ios.js';
+
+    var newIosFile = fs.readFileSync(iosSource).toString().replace(/__API_KEY__/g, key);
     try {
-        fs.writeFileSync('./plugin-google-places.ios.js', newIosFile);
+        fs.writeFileSync(iosSource, newIosFile);
     } catch(err) {
         console.log("Failed to write ios plugin-google-places.ios.js");
         console.log(err);
     }
 
+    let plist = './platforms/ios/Info.plist';
+
     if(location) {
         try {
-            fs.writeFileSync('./platforms/ios/Info.plist',
+            fs.writeFileSync(plist,
 
 `
 <?xml version="1.0" encoding="UTF-8"?>
@@ -173,9 +177,9 @@ function addIosKey(key, location, images) {
         } catch(err) {
             console.log("Failed to create Info.plist");
         }
-    } else if(fs.existsSync('./platforms/ios/Info.plist')) {
+    } else if(fs.existsSync(plist)) {
         try {
-            fs.unlinkSync('./platforms/ios/Info.plist');
+            fs.unlinkSync(plist);
         } catch(err) {
             console.log("Failed to delete Info.plist");
             console.log(err);

@@ -74,7 +74,11 @@ export function getPlacesById(ids: string[]): Promise<Place[]> {
                             });
                         }
 
-                        resolve(places);
+                        if(places.length !== ids.length) {
+                            reject("Some places could not be found");
+                        } else {
+                            resolve(places);
+                        }
                     }
                 }
             }));
