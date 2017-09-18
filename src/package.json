@@ -1,6 +1,6 @@
 {
   "name": "nativescript-plugin-google-places",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Choose a place using Google Place Picker",
   "main": "plugin-google-places",
   "typings": "index.d.ts",
