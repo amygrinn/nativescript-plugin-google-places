@@ -23,21 +23,18 @@ cd node_modules/nativescript-plugin-google-places && npm run configure
 
 ## Prerequisites
 
-Set up Google Places before installing, the setup script will ask for an API key for iOS and Android. 
-
-It won't run on a platform without that platform's key being added.
+Set up the Google Places API keys before installing this plugin, the setup script will ask 
+for them.
 
 For the iOS key, [click here](https://developers.google.com/places/ios-api/start) then click "GET A KEY".
 
 For the Android key:
 1. [click here](https://developers.google.com/places/android-api/start) then click "GET A KEY".
-2. Go to the [Google developer console](https://console.developers.google.com) and click "Credentials" on the right.
+2. Go to the [Google developer console](https://console.developers.google.com) and click "Credentials" on the left.
 3. Click the first key in the list which is the one you just created and under "Key restriction", select Android apps.
 4. Enter in your package name and SHA-1 certificate fingerprint and press save at the bottom. You may want to add your debug and production SHA-1 fingerprints.
 
 ## Installation
-
-Describe your plugin installation steps. Ideally it would be something like:
 
 ```javascript
 tns plugin add nativescript-plugin-google-places
@@ -106,6 +103,7 @@ GooglePlaces.getPlacesById([
 
 * Google recommends always displaying the attributions string when using the Place data.
 * Google requires the "Powered by Google" picture next to Place data whenever the data is used outside of the map.
+	The picture is installed by the plugin if you allow it to during the setup script.
 
 You can use the light version:
 ```html
