@@ -155,6 +155,10 @@ function getPrompts() {
             description: 'Enter the Google Places API key for Android (leave blank if not using Android)'
         },
         {
+            name: 'browser_key',
+            description: 'Enter browser key if using "getStaticMapUrl" (leave blank otherwise)'
+        },
+        {
             name: 'location',
             description: 'Would you like to add the location permission to your app? (y/n)',
             default: 'y'
@@ -186,6 +190,12 @@ function getPrompts() {
                 };
             }
 
+            if(result.browser_key) {
+                config.browser = {
+                    key: result.browser_key
+                }
+            }
+
             if(isSelected(result.location)) {
                 config.location = true;
             }
@@ -211,6 +221,10 @@ function configure() {
 
     if(config.ios) {
         addIosKey(config.ios.key, config.location, config.images);
+    }
+
+    if(config.browser) {
+        addBrowserKey(config.browser.key);
     }
 
     console.log("You're all set!");
@@ -317,6 +331,18 @@ function addIosKey(key, location, images) {
             console.log("Unable to copy images, App_Resources folder doesn't exist.")
         }
         
+    }
+}
+
+function addBrowserKey(key) {
+    let commonSource = './plugin-google-places.common.js';
+
+    var newCommonFile = fs.readFileSync(commonSource).toString().replace(/__API_KEY__/g, key);
+    try {
+        fs.writeFileSync(commonSource, newCommonFile);
+    } catch(err) {
+        console.log("Failed to write plugin.google-places.common.ts");
+        console.log(err);
     }
 }
 

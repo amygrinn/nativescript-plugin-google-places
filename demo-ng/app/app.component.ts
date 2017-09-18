@@ -2,6 +2,10 @@ import { Component } from "@angular/core";
 
 import * as GooglePlaces from 'nativescript-plugin-google-places';
 
+import { ImageSource } from 'image-source';
+import * as platform from "tns-core-modules/platform";
+
+
 @Component({
     selector: "ns-app",
     templateUrl: "app.component.html",
@@ -10,6 +14,8 @@ import * as GooglePlaces from 'nativescript-plugin-google-places';
 export class AppComponent {
 
     place: GooglePlaces.Place;
+
+    staticMapUrl: string;
 
     constructor() {
         GooglePlaces.init();
@@ -30,7 +36,12 @@ export class AppComponent {
     pickPlace(): void {
         console.log("picking place");
         GooglePlaces.pickPlace()
-            .then(place => this.place = place)
+            .then(place => {
+                this.place = place;
+                
+                this.staticMapUrl = GooglePlaces.getStaticMapUrl(place, { width: platform.screen.mainScreen.widthDIPs, height: 250 });
+                console.log(this.staticMapUrl);
+            })
             .catch(error => console.log(error));
     }
 }

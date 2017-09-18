@@ -7,26 +7,7 @@ Nativescript plugin for [Google Places API](https://developers.google.com/places
 <img src="https://developers.google.com/places/images/placepicker.png" alt="Android" height="400"/> <img src="https://developers.google.com/places/images/placepicker-ios.png" alt="Android" height="400"/>
 
 
-## Updates
-
-#### v1.1.2
-* Fixed iOS bug where panning the map would destroy the link to resolve the promise, leaving the user stuck in the map view.
-* Installer script now adds iOS images manually since the cocoapods version was inaccessible. If updating rather than installing for the first time, run:
-
-```
-cd node_modules/nativescript-plugin-google-places && npm run configure
-```
-
-#### v1.2.0
-* Added ```getPlacesById(id: string[]): Place[]```
-* Fixed Android error where place returned by placepicker would not have all of the info
-
-#### v1.2.1
-* Fixed setup error where ios keys were not being replaced after reconfiguring
-* Fixed getPlacesById error where ios results were being returned in reverse order
-* Added error handling to Android for getPlacesById if not all places can be found
-
-Now you can be sure the places array you get from getPlacesById has the same number of elements and is in the same order as the ids you send it.
+## [Updates](#new-updates)
 
 ## Prerequisites
 
@@ -40,6 +21,14 @@ For the Android key:
 2. Go to the [Google developer console](https://console.developers.google.com) and click "Credentials" on the left.
 3. Click the first key in the list which is the one you just created and under "Key restriction", select Android apps.
 4. Enter in your package name and SHA-1 certificate fingerprint and press save at the bottom. You may want to add your debug and production SHA-1 fingerprints.
+
+If you want to use the getStaticMapUrl function you'll need to create a browser key:
+1. [click here](https://developers.google.com/maps/documentation/static-maps/) then click "GET A KEY".
+2. Go to the [Google developer console](https://console.developers.google.com) and click "Library" on the left.
+3. Find "Google Static Maps API" and click the "URL signing secret" tab.
+4. Click the "Allow unsigned usage" button.
+5. Click "Credentials" on the left, your browser key will be the first key in the list.
+
 
 ## Installation
 
@@ -106,6 +95,23 @@ GooglePlaces.getPlacesById([
     .catch(error => console.log(error));
 ```
 
+To get a static map:
+
+```javascript
+this.staticMapUrl = GooglePlaces.getStaticMapUrl(
+    place, 
+    { 
+        width: 250,
+        height: 250
+    }
+);
+```
+
+```html
+<Image *ngIf="staticMapUrl" [src]="staticMapUrl" width="250" height="250"></Image>
+```
+
+
 ## Best Practices
 
 * Google recommends always displaying the attributions string, when available, when using the Place data.
@@ -139,3 +145,28 @@ or the dark version:
 | --- | --- | --- |
 | southWest | Location | Default SouthWest corner of the map |
 | northEast | Location | Default NorthEast corner of the map |
+
+# Updates <a id="new-updates"></a>
+
+#### v1.1.2
+* Fixed iOS bug where panning the map would destroy the link to resolve the promise, leaving the user stuck in the map view.
+* Installer script now adds iOS images manually since the cocoapods version was inaccessible. If updating rather than installing for the first time, run:
+
+```
+cd node_modules/nativescript-plugin-google-places && npm run configure
+```
+
+#### v1.2.0
+* Added ```getPlacesById(id: string[]): Place[]```
+* Fixed Android error where place returned by placepicker would not have all of the info
+
+#### v1.2.1
+* Fixed setup error where ios keys were not being replaced after reconfiguring
+* Fixed getPlacesById error where ios results were being returned in reverse order
+* Added error handling to Android for getPlacesById if not all places can be found
+
+Now you can be sure the places array you get from getPlacesById has the same number of elements and is in the same order as the ids you send it.
+
+#### v1.3.0
+* Added ```getStaticMapUrl(place: Place, options: { width: number, height: number }): string```
+* Updated installer to request browser key for the static maps. Run ```npm run configure``` to update

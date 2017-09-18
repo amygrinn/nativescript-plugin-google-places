@@ -1,6 +1,7 @@
 import * as app from "tns-core-modules/application";
 
 import { Place, Location, Viewport } from './index';
+import * as Common from './plugin-google-places.common';
 
 declare var com: any;
 
@@ -88,4 +89,8 @@ export function getPlacesById(ids: string[]): Promise<Place[]> {
             reject(error);
         }
     });
+}
+
+export function getStaticMapUrl(place: Place, options: { width: number, height: number}): string {
+    return Common.getStaticMapUrl(place, options);
 }

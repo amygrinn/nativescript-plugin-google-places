@@ -84,6 +84,7 @@ if(fs.existsSync(pluginConfigPath)) {
     try {
         config = JSON.parse(fs.readFileSync(pluginConfigPath));
         resetiOS();
+        resetBrowser();
         try {
             fs.unlinkSync(pluginConfigPath);
         } catch(error) {
@@ -96,7 +97,7 @@ if(fs.existsSync(pluginConfigPath)) {
 }
 
 function resetiOS() {
-    if(config.ios.key) {
+    if(config.ios) {
         let iosSource = './plugin-google-places.ios.js';
 
         var regEx = new RegExp(config.ios.key, "g");
@@ -105,6 +106,21 @@ function resetiOS() {
             fs.writeFileSync(iosSource, newIosFile);
         } catch(err) {
             console.log("Failed to write " + iosSource);
+            console.log(err);
+        }
+    }
+}
+
+function resetBrowser() {
+    if(config.browser) {
+        let commonSource = './plugin-google-places.common.js';
+
+        var regEx = new RegExp(config.browser.key, "g");
+        var newCommonFile = fs.readFileSync(commonSource).toString().replace(regEx, "__API_KEY__");
+        try {
+            fs.writeFileSync(commonSource, newCommonFile);
+        } catch(err) {
+            console.log("Failed to write " + commonSource);
             console.log(err);
         }
     }

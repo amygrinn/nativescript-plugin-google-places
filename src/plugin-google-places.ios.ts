@@ -2,6 +2,7 @@ import { ContentView } from 'tns-core-modules/ui/content-view';
 import * as utils from "tns-core-modules/utils/utils";
 
 import { Place, Location, Viewport } from './index';
+import * as Common from './plugin-google-places.common';
 
 declare class GMSPlaceResultCallback extends NSObject {
 
@@ -54,6 +55,10 @@ export function getPlacesById(ids: string[]): Promise<Place[]> {
 
         getPlacesRecursive();
     });
+}
+
+export function getStaticMapUrl(place: Place, options: { width: number, height: number }): string {
+    return Common.getStaticMapUrl(place, options);
 }
 
 declare class GMSPlacePickerViewControllerDelegate extends NSObject {};
