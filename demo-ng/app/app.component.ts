@@ -13,6 +13,18 @@ export class AppComponent {
 
     constructor() {
         GooglePlaces.init();
+
+        setTimeout(() => {
+            GooglePlaces.getPlacesById([
+                "ChIJ4zPXqIiAhYAR31X3S64T6Uw",
+                "ChIJ6zMe3oWAhYARaZ33Z1BAMRo",
+                "ChIJAUWoGIaAhYARQ6zvky_f10Q"
+            ])
+                .then((places: GooglePlaces.Place[]) => {
+                    places.forEach(place => console.log(place.name));
+                })
+                .catch(error => console.log(error));
+        }, 1000)
     }
 
     pickPlace(): void {

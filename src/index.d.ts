@@ -18,3 +18,5 @@ export interface Viewport {
 export function init(): void;
 
 export function pickPlace(viewport?: Viewport): Promise<Place>;
+
+export function getPlacesById(id: string[]): Promise<Place[]>;

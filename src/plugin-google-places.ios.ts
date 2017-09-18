@@ -3,7 +3,17 @@ import * as utils from "tns-core-modules/utils/utils";
 
 import { Place, Location, Viewport } from './index';
 
-declare var GMSPlacesClient: any, GMSServices: any;
+declare class GMSPlaceResultCallback extends NSObject {
+
+}
+
+declare class GMSPlacesClient extends NSObject {
+    static provideAPIKey(key: string): void;
+    static sharedClient(): GMSPlacesClient;
+    lookUpPlaceIDCallback(id: string, callback: (place: GMSPlace, error) => void ): void;
+};
+
+declare var GMSServices: any;
 
 export function init(): void {
     GMSPlacesClient.provideAPIKey("__API_KEY__");
@@ -12,6 +22,38 @@ export function init(): void {
 
 export function pickPlace(viewport?: Viewport): Promise<Place>{
     return PlacePicker.Instance.pickPlace(viewport);
+}
+
+
+export function getPlacesById(ids: string[]): Promise<Place[]> {
+    return new Promise<Place[]>((resolve, reject) => {
+        let client: GMSPlacesClient = GMSPlacesClient.sharedClient();
+
+        let places: Place[] = [];
+
+        let getPlacesRecursive = () => {
+            if(ids.length === 0) {
+                resolve(places);
+            } else {
+                client.lookUpPlaceIDCallback(ids.pop(), (place: GMSPlace, error) => {
+                    if(!place) {
+                        reject(error);
+                    } else {
+                        places.push({
+                            name: place.name,
+                            id: place.placeID,
+                            address: place.formattedAddress,
+                            attributions: place.attributions
+                        });
+                    }
+
+                    getPlacesRecursive();                    
+                });
+            }
+        }
+
+        getPlacesRecursive();
+    });
 }
 
 declare class GMSPlacePickerViewControllerDelegate extends NSObject {};

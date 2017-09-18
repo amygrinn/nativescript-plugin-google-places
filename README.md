@@ -14,12 +14,6 @@ Nativescript plugin for [Google Places API](https://developers.google.com/places
 cd node_modules/nativescript-plugin-google-places && npm run configure
 ```
 
-## Coming soon
-
-* ```getPlaceById(id: string): Promise<Place>```
-* ```getDistanceTo(place: Place): %tbd%```
-
-
 ## Prerequisites
 
 Set up Google Places before installing, the setup script will ask for an API key for iOS and Android. 
@@ -84,6 +78,20 @@ let viewport = {
 
 GooglePlaces.pickPlace(viewport)
     .then(place => console.log(JSON.stringify(place)))
+    .catch(error => console.log(error));
+```
+
+To get places using ids:
+
+```javascript
+GooglePlaces.getPlacesById([
+    "ChIJ4zPXqIiAhYAR31X3S64T6Uw",
+    "ChIJ6zMe3oWAhYARaZ33Z1BAMRo",
+    "ChIJAUWoGIaAhYARQ6zvky_f10Q"
+])
+    .then((places: GooglePlaces.Place[]) => {
+        places.forEach(place => console.log(place.name));
+    })
     .catch(error => console.log(error));
 ```
 
