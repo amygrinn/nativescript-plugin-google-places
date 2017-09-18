@@ -4,6 +4,9 @@
 
 Nativescript plugin for [Google Places API](https://developers.google.com/places/)
 
+<img src="https://developers.google.com/places/images/placepicker.png" alt="Android" height="400"/> <img src="https://developers.google.com/places/images/placepicker-ios.png" alt="Android" height="400"/>
+
+
 ## Updates
 
 #### v1.1.2
