@@ -1,5 +1,3 @@
-export function init(): void;
-
 export interface Place {
     id: string,
     name: string,
@@ -16,5 +14,7 @@ export interface Viewport {
     southWest: Location;    
     northEast: Location;
 }
+
+export function init(): void;
 
 export function pickPlace(viewport?: Viewport): Promise<Place>;

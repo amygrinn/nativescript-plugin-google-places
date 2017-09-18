@@ -5,6 +5,15 @@ import { Place, Location, Viewport } from './index';
 
 declare var GMSPlacesClient: any, GMSServices: any;
 
+export function init(): void {
+    GMSPlacesClient.provideAPIKey("__API_KEY__");
+    GMSServices.provideAPIKey("__API_KEY__");
+}
+
+export function pickPlace(viewport?: Viewport): Promise<Place>{
+    return PlacePicker.Instance.pickPlace(viewport);
+}
+
 declare class GMSPlacePickerViewControllerDelegate extends NSObject {};
 
 declare class GMSPlace extends NSObject {
@@ -36,93 +45,100 @@ declare class GMSPlacePickerConfig extends NSObject {
     public viewport: GMSCoordinateBounds;
 }
 
-declare interface PlacePickerViewDelegateResponder {
-    placePicked: (place: Place) => void,
-    error: (error: NSError) => void,
-    canceled: () => void
-}
 
-class PlacePickerViewDelegateImpl extends NSObject implements GMSPlacePickerViewControllerDelegate{
+class PlacePicker extends NSObject implements GMSPlacePickerViewControllerDelegate {
+
+    private static _instance: PlacePicker;
+    private static _providedKeys: boolean = false;
+
+    private constructor() { super(); }
+
     public static ObjCProtocols = [GMSPlacePickerViewControllerDelegate];
 
-    private _owner: WeakRef<PlacePickerViewDelegateResponder>;
+    private resolve: (place: Place) => void;
+    private reject: (error) => void;
+    private placePickerViewController: GMSPlacePickerViewController;
 
-    public static initWithOwner(owner: WeakRef<any>): PlacePickerViewDelegateImpl {
-        let handler = <PlacePickerViewDelegateImpl>PlacePickerViewDelegateImpl.new();
-        handler._owner = owner;
-        return handler;
+    static get Instance(): PlacePicker{
+        if(!this._instance){
+            this._instance = PlacePicker.new();
+            this._instance.initialize();
+        }
+        return this._instance;
     }
 
-    public placePickerDidPickPlace(placePicker: GMSPlacePickerViewController, place: GMSPlace): void {
-        var owner = this._owner.get();
-        owner.placePicked({
-            name: place.name,
-            id: place.placeID,
-            address: place.formattedAddress,
-            attributions: place.attributions
-        });
-    }
-
-    public placePickerDidFailWithError(placePicker: GMSPlacePickerViewController, error: NSError): void {
-        var owner = this._owner.get();
-        owner.error(error);
-    }
-
-    public placePickerDidCancel(placePicker: GMSPlacePickerViewController): void {
-        var owner = this._owner.get();
-        console.dir(owner);
-        owner.canceled();
-    }
-}
-
-
-export function init(): void {
-    console.log("Initializing google places");
-    GMSPlacesClient.provideAPIKey("__API_KEY__");
-    GMSServices.provideAPIKey("__API_KEY__");
-}
-
-export function pickPlace(viewport?: Viewport): Promise<{name: string, address: string}> {
-
-    return new Promise<Place>((resolve, reject) => {
-        let rootViewController = utils.ios.getter(UIApplication, UIApplication.sharedApplication).keyWindow.rootViewController;
+    public pickPlace(viewport?: Viewport): Promise<Place>{
 
         let bounds: GMSCoordinateBounds = null;
-
+        
         if(viewport) {
             let northEast = new CLLocationCoordinate2D();
-            northEast.latitude = viewport.northEast.latitude
-            northEast.longitude = viewport.northEast.longitude
+            northEast.latitude = viewport.northEast.latitude;
+            northEast.longitude = viewport.northEast.longitude;
 
             let southWest = new CLLocationCoordinate2D();
-            southWest.latitude = viewport.southWest.latitude
-            southWest.longitude = viewport.southWest.longitude
+            southWest.latitude = viewport.southWest.latitude;
+            southWest.longitude = viewport.southWest.longitude;
 
-            bounds = GMSCoordinateBounds.alloc().initWithCoordinateCoordinate(southWest, northEast)
+            bounds = GMSCoordinateBounds.alloc().initWithCoordinateCoordinate(southWest, northEast);
         }
 
         let config: GMSPlacePickerConfig = GMSPlacePickerConfig.alloc().initWithViewport(bounds);
 
-        let ppvc = GMSPlacePickerViewController.alloc().initWithConfig(config);
+        this.placePickerViewController.initWithConfig(config);
 
-        let responder: PlacePickerViewDelegateResponder = {
-            placePicked: (place: Place) => {
-                rootViewController.dismissViewControllerAnimatedCompletion(true, null);
-                resolve(place);                
-            },
-            canceled: () => {
-                rootViewController.dismissViewControllerAnimatedCompletion(true, null);
-                resolve(null);
-            },
-            error: (error: NSError) => {
-                console.log(JSON.stringify(error));
-                rootViewController.dismissViewControllerAnimatedCompletion(true, null);
-                reject(error);                
-            }
+        let rootViewController = utils.ios.getter(UIApplication, UIApplication.sharedApplication).keyWindow.rootViewController;         
+        rootViewController.presentViewControllerAnimatedCompletion(this.placePickerViewController, true, null);
+        
+
+        return new Promise<Place>((resolve, reject) => {
+            this.setPromise(resolve, reject);
+        });
+    }
+
+    private initialize(): void {
+        this.placePickerViewController = GMSPlacePickerViewController.alloc().initWithConfig(null);
+        this.placePickerViewController.delegate = this;
+    }
+
+    static new(): PlacePicker {
+        return <PlacePicker>super.new();
+    }
+
+    public placePickerDidPickPlace(placePicker: GMSPlacePickerViewController, place: GMSPlace): void {
+        this.destroyPlacePicker();
+        if(this.resolve) {
+            this.resolve({
+                name: place.name,
+                id: place.placeID,
+                address: place.formattedAddress,
+                attributions: place.attributions
+            });
         }
+    }
 
-        ppvc.delegate = PlacePickerViewDelegateImpl.initWithOwner(new WeakRef(responder));
+    public placePickerDidFailWithError(placePicker: GMSPlacePickerViewController, error: NSError): void {
+        this.destroyPlacePicker();
+        if(this.reject) {
+            this.reject(error);
+        }
+    }
 
-        rootViewController.presentViewControllerAnimatedCompletion(ppvc, true, null);
-    });
+    public placePickerDidCancel(placePicker: GMSPlacePickerViewController): void {
+        this.destroyPlacePicker();
+        if(this.resolve) {
+            this.resolve(null);
+        }
+    }
+
+    private setPromise(resolve: (place: Place) => void, reject: (error) => void) {
+        this.resolve = resolve;
+        this.reject = reject;
+    }
+
+    private destroyPlacePicker(): void {
+        let rootViewController = utils.ios.getter(UIApplication, UIApplication.sharedApplication).keyWindow.rootViewController; 
+        rootViewController.dismissViewControllerAnimatedCompletion(true, null); 
+        PlacePicker._instance = null;
+    }
 }

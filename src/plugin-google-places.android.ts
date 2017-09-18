@@ -4,8 +4,7 @@ import { Place, Location, Viewport } from './index';
 
 declare var com: any;
 
-export function init(): void {
-}
+export function init(): void {}
 
 export function pickPlace(viewport: Viewport): Promise<Place> {
     return new Promise<Place>((resolve, reject) => {

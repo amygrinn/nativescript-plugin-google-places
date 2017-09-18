@@ -16,6 +16,7 @@ export class AppComponent {
     }
 
     pickPlace(): void {
+        console.log("picking place");
         GooglePlaces.pickPlace()
             .then(place => this.place = place)
             .catch(error => console.log(error));

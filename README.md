@@ -1,8 +1,23 @@
 # Nativescript Plugin Google Places
 
-<!--Add your plugin badges here. See [nativescript-urlhandler](https://github.com/hypery2k/nativescript-urlhandler) for example.-->
+[![npm version](https://badge.fury.io/js/nativescript-plugin-google-places.svg)](https://badge.fury.io/js/nativescript-plugin-google-places)
 
 Nativescript plugin for [Google Places API](https://developers.google.com/places/)
+
+## Updates
+
+#### v1.1.2
+* Fixed iOS bug where panning the map would destroy the link to resolve the promise, leaving the user stuck in the map view.
+* Installer script now adds iOS images manually since the cocoapods version was inaccessible. If updating rather than installing for the first time, run:
+
+```
+cd node_modules/nativescript-plugin-google-places && npm run configure
+```
+
+## Coming soon
+
+* ```getPlaceById(id: string): Promise<Place>```
+* ```getDistanceTo(place: Place): %tbd%```
 
 
 ## Prerequisites
@@ -79,11 +94,11 @@ GooglePlaces.pickPlace(viewport)
 
 You can use the light version:
 ```html
-<Image res="res://powered_by_google_light"></Image>
+<Image res="res://powered_by_google_light" stretch="none"></Image>
 ```
 or the dark version:
 ```html
-<Image res="res://powered_by_google_dark"></Image>
+<Image res="res://powered_by_google_dark" stretch="none"></Image>
 ```
 
 ## API

@@ -60,11 +60,33 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/*!*********************!*\
+  !*** external "fs" ***!
+  \*********************/
+/*! no static exports found */
+/*! all exports used */
+/***/ (function(module, exports) {
+
+module.exports = require("fs");
+
+/***/ }),
+/* 1 */
+/*!***********************!*\
+  !*** external "path" ***!
+  \***********************/
+/*! no static exports found */
+/*! all exports used */
+/***/ (function(module, exports) {
+
+module.exports = require("path");
+
+/***/ }),
+/* 2 */
 /*!***************************!*\
   !*** external "readline" ***!
   \***************************/
@@ -75,7 +97,7 @@
 module.exports = require("readline");
 
 /***/ }),
-/* 1 */
+/* 3 */
 /*!******************************!*\
   !*** ./scripts/installer.js ***!
   \******************************/
@@ -83,9 +105,10 @@ module.exports = require("readline");
 /*! all exports used */
 /***/ (function(module, exports, __webpack_require__) {
 
-var fs = __webpack_require__(/*! fs */ 2);
-var path = __webpack_require__(/*! path */ 3);
+var fs = __webpack_require__(/*! fs */ 0);
+var path = __webpack_require__(/*! path */ 1);
 var prompt = __webpack_require__(/*! prompt-lite */ 4);
+var ncp = __webpack_require__(/*! ncp */ 16).ncp;
 
 var pluginConfigFile = "google-places.config.json"
 var pluginConfigPath = path.join("../../", pluginConfigFile);
@@ -137,6 +160,11 @@ function getPrompts() {
             default: 'y'
         },
         {
+            name: 'images',
+            description: 'Would you like to install the "powered by Google" images (required by Google)? (y/n)',
+            default: 'y'
+        },
+        {
             name: 'save_config',
             description: 'Do you want to save the config file? Reinstalling will reuse setup from: ' + pluginConfigFile + '. (y/n)',
             default: 'y'
@@ -161,6 +189,10 @@ function getPrompts() {
             if(isSelected(result.location)) {
                 config.location = true;
             }
+
+            if(isSelected(result.images)) {
+                config.images = true;
+            }
         
             if(isSelected(result.save_config)) {
                 saveConfig();
@@ -178,7 +210,7 @@ function configure() {
     }
 
     if(config.ios) {
-        addIosKey(config.ios.key, config.location);
+        addIosKey(config.ios.key, config.location, config.images);
     }
 
     console.log("You're all set!");
@@ -218,7 +250,7 @@ function addAndroidKey(key, location) {
     }
 }
 
-function addIosKey(key, location) {
+function addIosKey(key, location, images) {
 
     var newIosFile = fs.readFileSync('./plugin-google-places.ios.js').toString().replace(/__API_KEY__/g, key);
     try {
@@ -256,29 +288,33 @@ function addIosKey(key, location) {
             console.log(err);
         }
     }
+
+    if(images) {
+        var iosResPath = '../../app/App_Resources/iOS/Assets.xcassets';
+        if(fs.existsSync(iosResPath)) {
+
+            var lightImages = 'powered_by_google_light.imageset';
+            var darkImages = 'powered_by_google_dark.imageset';
+
+            ncp('./scripts/' + lightImages, iosResPath + '/' + lightImages, function(error) {
+                if(error) {
+                    console.log("Unable to " + lightImages);
+                    console.log(error);
+                }
+            });
+            ncp('./scripts/' + darkImages, iosResPath + '/' + darkImages, function(error) {
+                if(error) {
+                    console.log("Unable to copy " + darkImages);
+                    console.log(error);
+                }
+            });
+
+        } else {
+            console.log("Unable to copy images, App_Resources folder doesn't exist.")
+        }
+        
+    }
 }
-
-/***/ }),
-/* 2 */
-/*!*********************!*\
-  !*** external "fs" ***!
-  \*********************/
-/*! no static exports found */
-/*! all exports used */
-/***/ (function(module, exports) {
-
-module.exports = require("fs");
-
-/***/ }),
-/* 3 */
-/*!***********************!*\
-  !*** external "path" ***!
-  \***********************/
-/*! no static exports found */
-/*! all exports used */
-/***/ (function(module, exports) {
-
-module.exports = require("path");
 
 /***/ }),
 /* 4 */
@@ -297,7 +333,7 @@ module.exports = require("path");
  */
 
 var events = __webpack_require__(/*! events */ 5),
-    readline = __webpack_require__(/*! readline */ 0),
+    readline = __webpack_require__(/*! readline */ 2),
     util = __webpack_require__(/*! util */ 6),
     async = __webpack_require__(/*! async */ 7),
     read = __webpack_require__(/*! read */ 9),
@@ -1846,7 +1882,7 @@ module.exports = __webpack_require__(/*! ./lib/async */ 8);
 
 module.exports = read
 
-var readline = __webpack_require__(/*! readline */ 0)
+var readline = __webpack_require__(/*! readline */ 2)
 var Mute = __webpack_require__(/*! mute-stream */ 10)
 
 function read (opts, cb) {
@@ -2966,6 +3002,278 @@ webpackEmptyContext.keys = function() { return []; };
 webpackEmptyContext.resolve = webpackEmptyContext;
 module.exports = webpackEmptyContext;
 webpackEmptyContext.id = 15;
+
+/***/ }),
+/* 16 */
+/*!*************************************!*\
+  !*** ./node_modules/ncp/lib/ncp.js ***!
+  \*************************************/
+/*! no static exports found */
+/*! all exports used */
+/***/ (function(module, exports, __webpack_require__) {
+
+var fs = __webpack_require__(/*! fs */ 0),
+    path = __webpack_require__(/*! path */ 1);
+
+module.exports = ncp;
+ncp.ncp = ncp;
+
+function ncp (source, dest, options, callback) {
+  var cback = callback;
+
+  if (!callback) {
+    cback = options;
+    options = {};
+  }
+
+  var basePath = process.cwd(),
+      currentPath = path.resolve(basePath, source),
+      targetPath = path.resolve(basePath, dest),
+      filter = options.filter,
+      rename = options.rename,
+      transform = options.transform,
+      clobber = options.clobber !== false,
+      modified = options.modified,
+      dereference = options.dereference,
+      errs = null,
+      started = 0,
+      finished = 0,
+      running = 0,
+      limit = options.limit || ncp.limit || 16;
+
+  limit = (limit < 1) ? 1 : (limit > 512) ? 512 : limit;
+
+  startCopy(currentPath);
+  
+  function startCopy(source) {
+    started++;
+    if (filter) {
+      if (filter instanceof RegExp) {
+        if (!filter.test(source)) {
+          return cb(true);
+        }
+      }
+      else if (typeof filter === 'function') {
+        if (!filter(source)) {
+          return cb(true);
+        }
+      }
+    }
+    return getStats(source);
+  }
+
+  function getStats(source) {
+    var stat = dereference ? fs.stat : fs.lstat;
+    if (running >= limit) {
+      return setImmediate(function () {
+        getStats(source);
+      });
+    }
+    running++;
+    stat(source, function (err, stats) {
+      var item = {};
+      if (err) {
+        return onError(err);
+      }
+
+      // We need to get the mode from the stats object and preserve it.
+      item.name = source;
+      item.mode = stats.mode;
+      item.mtime = stats.mtime; //modified time
+      item.atime = stats.atime; //access time
+
+      if (stats.isDirectory()) {
+        return onDir(item);
+      }
+      else if (stats.isFile()) {
+        return onFile(item);
+      }
+      else if (stats.isSymbolicLink()) {
+        // Symlinks don't really need to know about the mode.
+        return onLink(source);
+      }
+    });
+  }
+
+  function onFile(file) {
+    var target = file.name.replace(currentPath, targetPath);
+    if(rename) {
+      target =  rename(target);
+    }
+    isWritable(target, function (writable) {
+      if (writable) {
+        return copyFile(file, target);
+      }
+      if(clobber) {
+        rmFile(target, function () {
+          copyFile(file, target);
+        });
+      }
+      if (modified) {
+        var stat = dereference ? fs.stat : fs.lstat;
+        stat(target, function(err, stats) {
+            //if souce modified time greater to target modified time copy file
+            if (file.mtime.getTime()>stats.mtime.getTime())
+                copyFile(file, target);
+            else return cb();
+        });
+      }
+      else {
+        return cb();
+      }
+    });
+  }
+
+  function copyFile(file, target) {
+    var readStream = fs.createReadStream(file.name),
+        writeStream = fs.createWriteStream(target, { mode: file.mode });
+    
+    readStream.on('error', onError);
+    writeStream.on('error', onError);
+    
+    if(transform) {
+      transform(readStream, writeStream, file);
+    } else {
+      writeStream.on('open', function() {
+        readStream.pipe(writeStream);
+      });
+    }
+    writeStream.once('finish', function() {
+        if (modified) {
+            //target file modified date sync.
+            fs.utimesSync(target, file.atime, file.mtime);
+            cb();
+        }
+        else cb();
+    });
+  }
+
+  function rmFile(file, done) {
+    fs.unlink(file, function (err) {
+      if (err) {
+        return onError(err);
+      }
+      return done();
+    });
+  }
+
+  function onDir(dir) {
+    var target = dir.name.replace(currentPath, targetPath);
+    isWritable(target, function (writable) {
+      if (writable) {
+        return mkDir(dir, target);
+      }
+      copyDir(dir.name);
+    });
+  }
+
+  function mkDir(dir, target) {
+    fs.mkdir(target, dir.mode, function (err) {
+      if (err) {
+        return onError(err);
+      }
+      copyDir(dir.name);
+    });
+  }
+
+  function copyDir(dir) {
+    fs.readdir(dir, function (err, items) {
+      if (err) {
+        return onError(err);
+      }
+      items.forEach(function (item) {
+        startCopy(path.join(dir, item));
+      });
+      return cb();
+    });
+  }
+
+  function onLink(link) {
+    var target = link.replace(currentPath, targetPath);
+    fs.readlink(link, function (err, resolvedPath) {
+      if (err) {
+        return onError(err);
+      }
+      checkLink(resolvedPath, target);
+    });
+  }
+
+  function checkLink(resolvedPath, target) {
+    if (dereference) {
+      resolvedPath = path.resolve(basePath, resolvedPath);
+    }
+    isWritable(target, function (writable) {
+      if (writable) {
+        return makeLink(resolvedPath, target);
+      }
+      fs.readlink(target, function (err, targetDest) {
+        if (err) {
+          return onError(err);
+        }
+        if (dereference) {
+          targetDest = path.resolve(basePath, targetDest);
+        }
+        if (targetDest === resolvedPath) {
+          return cb();
+        }
+        return rmFile(target, function () {
+          makeLink(resolvedPath, target);
+        });
+      });
+    });
+  }
+
+  function makeLink(linkPath, target) {
+    fs.symlink(linkPath, target, function (err) {
+      if (err) {
+        return onError(err);
+      }
+      return cb();
+    });
+  }
+
+  function isWritable(path, done) {
+    fs.lstat(path, function (err) {
+      if (err) {
+        if (err.code === 'ENOENT') return done(true);
+        return done(false);
+      }
+      return done(false);
+    });
+  }
+
+  function onError(err) {
+    if (options.stopOnError) {
+      return cback(err);
+    }
+    else if (!errs && options.errs) {
+      errs = fs.createWriteStream(options.errs);
+    }
+    else if (!errs) {
+      errs = [];
+    }
+    if (typeof errs.write === 'undefined') {
+      errs.push(err);
+    }
+    else { 
+      errs.write(err.stack + '\n\n');
+    }
+    return cb();
+  }
+
+  function cb(skipped) {
+    if (!skipped) running--;
+    finished++;
+    if ((started === finished) && (running === 0)) {
+      if (cback !== undefined ) {
+        return errs ? cback(errs) : cback(null);
+      }
+    }
+  }
+}
+
+
+
 
 /***/ })
 /******/ ]);

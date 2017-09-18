@@ -1,6 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 var prompt = require('prompt-lite');
+var ncp = require('ncp').ncp;
 
 var pluginConfigFile = "google-places.config.json"
 var pluginConfigPath = path.join("../../", pluginConfigFile);
@@ -52,6 +53,11 @@ function getPrompts() {
             default: 'y'
         },
         {
+            name: 'images',
+            description: 'Would you like to install the "powered by Google" images (required by Google)? (y/n)',
+            default: 'y'
+        },
+        {
             name: 'save_config',
             description: 'Do you want to save the config file? Reinstalling will reuse setup from: ' + pluginConfigFile + '. (y/n)',
             default: 'y'
@@ -76,6 +82,10 @@ function getPrompts() {
             if(isSelected(result.location)) {
                 config.location = true;
             }
+
+            if(isSelected(result.images)) {
+                config.images = true;
+            }
         
             if(isSelected(result.save_config)) {
                 saveConfig();
@@ -93,7 +103,7 @@ function configure() {
     }
 
     if(config.ios) {
-        addIosKey(config.ios.key, config.location);
+        addIosKey(config.ios.key, config.location, config.images);
     }
 
     console.log("You're all set!");
@@ -133,7 +143,7 @@ function addAndroidKey(key, location) {
     }
 }
 
-function addIosKey(key, location) {
+function addIosKey(key, location, images) {
 
     var newIosFile = fs.readFileSync('./plugin-google-places.ios.js').toString().replace(/__API_KEY__/g, key);
     try {
@@ -170,5 +180,31 @@ function addIosKey(key, location) {
             console.log("Failed to delete Info.plist");
             console.log(err);
         }
+    }
+
+    if(images) {
+        var iosResPath = '../../app/App_Resources/iOS/Assets.xcassets';
+        if(fs.existsSync(iosResPath)) {
+
+            var lightImages = 'powered_by_google_light.imageset';
+            var darkImages = 'powered_by_google_dark.imageset';
+
+            ncp('./scripts/' + lightImages, iosResPath + '/' + lightImages, function(error) {
+                if(error) {
+                    console.log("Unable to " + lightImages);
+                    console.log(error);
+                }
+            });
+            ncp('./scripts/' + darkImages, iosResPath + '/' + darkImages, function(error) {
+                if(error) {
+                    console.log("Unable to copy " + darkImages);
+                    console.log(error);
+                }
+            });
+
+        } else {
+            console.log("Unable to copy images, App_Resources folder doesn't exist.")
+        }
+        
     }
 }
