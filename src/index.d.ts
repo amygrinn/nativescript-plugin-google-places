@@ -2,7 +2,8 @@ export interface Place {
     id: string,
     name: string,
     address: string,
-    attributions: string
+    attributions: string,
+    types: string[]
 }
 
 export interface Location {

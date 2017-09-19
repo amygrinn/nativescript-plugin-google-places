@@ -135,6 +135,7 @@ or the dark version:
 | address | string | Readable address |
 | id | string | Unique ID of the place |
 | attributions | string | Attributions of the place |
+| types | string[] | List of place types ([more info](https://developers.google.com/places/ios-api/supported_types))
     
 | Location |||
 | --- | --- | --- |
@@ -170,3 +171,6 @@ Now you can be sure the places array you get from getPlacesById has the same num
 #### v1.3.0
 * Added ```getStaticMapUrl(place: Place, options: { width: number, height: number }): string```
 * Updated installer to request browser key for the static maps. Run ```npm run configure``` to update
+
+#### v1.3.1
+* Added "types" to Place definition.

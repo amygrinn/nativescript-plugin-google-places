@@ -4,9 +4,13 @@ import * as utils from "tns-core-modules/utils/utils";
 import { Place, Location, Viewport } from './index';
 import * as Common from './plugin-google-places.common';
 
-declare class GMSPlaceResultCallback extends NSObject {
-
-}
+declare class GMSPlace extends NSObject {
+    public name: any;
+    public placeID: any;
+    public formattedAddress: any;
+    public attributions: any;
+    public types: any;
+};
 
 declare class GMSPlacesClient extends NSObject {
     static provideAPIKey(key: string): void;
@@ -44,7 +48,8 @@ export function getPlacesById(ids: string[]): Promise<Place[]> {
                             name: place.name,
                             id: place.placeID,
                             address: place.formattedAddress,
-                            attributions: place.attributions
+                            attributions: place.attributions,
+                            types: utils.ios.collections.nsArrayToJSArray(place.types)
                         });
                     }
 
@@ -62,13 +67,6 @@ export function getStaticMapUrl(place: Place, options: { width: number, height: 
 }
 
 declare class GMSPlacePickerViewControllerDelegate extends NSObject {};
-
-declare class GMSPlace extends NSObject {
-    public name: any;
-    public placeID: any;
-    public formattedAddress: any;
-    public attributions: any;
-};
 
 declare class GMSPlacePickerViewController extends UIViewController {
     public static alloc(): GMSPlacePickerViewController;
@@ -159,7 +157,8 @@ class PlacePicker extends NSObject implements GMSPlacePickerViewControllerDelega
                 name: place.name,
                 id: place.placeID,
                 address: place.formattedAddress,
-                attributions: place.attributions
+                attributions: place.attributions,
+                types: utils.ios.collections.nsArrayToJSArray(place.types)
             });
         }
     }

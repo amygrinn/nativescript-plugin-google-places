@@ -34,13 +34,12 @@ export class AppComponent {
     }
 
     pickPlace(): void {
-        console.log("picking place");
         GooglePlaces.pickPlace()
             .then(place => {
                 this.place = place;
+                console.log(place.types);
                 
                 this.staticMapUrl = GooglePlaces.getStaticMapUrl(place, { width: platform.screen.mainScreen.widthDIPs, height: 250 });
-                console.log(this.staticMapUrl);
             })
             .catch(error => console.log(error));
     }

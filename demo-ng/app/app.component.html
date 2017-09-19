@@ -8,8 +8,9 @@
         <Label text="You picked:"></Label>
         <Label [text]="place.name"></Label>
         <Label [text]="place.address"></Label>
-        <Label [text]="place.attributions"></Label>
+        <Label *ngIf="place.attributions" [text]="place.attributions"></Label>
         <Label [text]="'ID: ' + place.id"></Label>
+        <Label *ngFor="let type of place.types" [text]="type"></Label>
         <Image src="res://powered_by_google_dark" stretch="none" style="background-color: black;"></Image>
         <Image src="res://powered_by_google_light" stretch="none"></Image>
         <Image *ngIf="staticMapUrl" [src]="staticMapUrl" width="100%" height="250"></Image>
