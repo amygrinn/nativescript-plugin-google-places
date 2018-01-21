@@ -73,7 +73,21 @@ export function getPlacesById(ids: string[]): Promise<Place[]> {
                                 id: place.getId ? place.getId() : '',
                                 attributions: place.getAttributions ? place.getAttributions() : '',
                                 address: place.getAddress ? place.getAddress() : '',
-                                types: place.getPlaceTypes ? utils.ad.collections.stringSetToStringArray(place.getPlaceTypes()).map(type => placesStrings[type]) : []
+                                types: place.getPlaceTypes ? utils.ad.collections.stringSetToStringArray(place.getPlaceTypes()).map(type => placesStrings[type]) : [],
+                                coordinates: place.getLatLng ? {
+                                    latitude: place.getLatLng().latitude,
+                                    longitude: place.getLatLng().longitude
+                                } : null,
+                                viewport: place.getViewport ? {
+                                    northEast: {
+                                        latitude: place.getViewport().northeast.latitude,
+                                        longitude: place.getViewport().northeast.longitude
+                                    },
+                                    southWest: {
+                                        latitude: place.getViewport().southwest.latitude,
+                                        longitude: place.getViewport().southwest.longitude
+                                    }
+                                } : null
                             });
                         }
 

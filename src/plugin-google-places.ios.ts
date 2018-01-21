@@ -10,6 +10,8 @@ declare class GMSPlace extends NSObject {
     public formattedAddress: any;
     public attributions: any;
     public types: any;
+    public coordinate: any;
+    public viewport: any;
 };
 
 declare class GMSPlacesClient extends NSObject {
@@ -49,7 +51,21 @@ export function getPlacesById(ids: string[]): Promise<Place[]> {
                             id: place.placeID,
                             address: place.formattedAddress,
                             attributions: place.attributions,
-                            types: utils.ios.collections.nsArrayToJSArray(place.types)
+                            types: utils.ios.collections.nsArrayToJSArray(place.types),
+                            coordinates: {
+                                latitude: place.coordinate.latitude,
+                                longitude: place.coordinate.longitude
+                            },
+                            viewport: {
+                                northEast: {
+                                    latitude: place.viewport.northEast.latitude,
+                                    longitude: place.viewport.northEast.longitude
+                                },
+                                southWest: {
+                                    latitude: place.viewport.southWest.latitude,
+                                    longitude: place.viewport.southWest.longitude
+                                }
+                            }
                         });
                     }
 
@@ -158,7 +174,21 @@ class PlacePicker extends NSObject implements GMSPlacePickerViewControllerDelega
                 id: place.placeID,
                 address: place.formattedAddress,
                 attributions: place.attributions,
-                types: utils.ios.collections.nsArrayToJSArray(place.types)
+                types: utils.ios.collections.nsArrayToJSArray(place.types),
+                coordinates: {
+                    latitude: place.coordinate.latitude,
+                    longitude: place.coordinate.longitude
+                },
+                viewport: {
+                    northEast: {
+                        latitude: place.viewport.northEast.latitude,
+                        longitude: place.viewport.northEast.longitude
+                    },
+                    southWest: {
+                        latitude: place.viewport.southWest.latitude,
+                        longitude: place.viewport.southWest.longitude
+                    }
+                }
             });
         }
     }
