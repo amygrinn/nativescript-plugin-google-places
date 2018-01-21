@@ -19,8 +19,8 @@ export function pickPlace(viewport: Viewport): Promise<Place> {
             let builder = new com.google.android.gms.location.places.ui.PlacePicker.IntentBuilder();
 
             if(viewport) {
-                let southWest = new com.google.android.gms.maps.model.LatLong(viewport.southWest.latitude, viewport.southWest.longitude);
-                let northEast = new com.google.android.gms.maps.model.LatLong(viewport.northEast.latitude, viewport.northEast.longitude);
+                let southWest = new com.google.android.gms.maps.model.LatLng(viewport.southWest.latitude, viewport.southWest.longitude);
+                let northEast = new com.google.android.gms.maps.model.LatLng(viewport.northEast.latitude, viewport.northEast.longitude);
 
                 let latLngBounds = new com.google.android.gms.maps.model.LatLngBounds(southWest, northEast);
 
@@ -73,7 +73,21 @@ export function getPlacesById(ids: string[]): Promise<Place[]> {
                                 id: place.getId ? place.getId() : '',
                                 attributions: place.getAttributions ? place.getAttributions() : '',
                                 address: place.getAddress ? place.getAddress() : '',
-                                types: place.getPlaceTypes ? utils.ad.collections.stringSetToStringArray(place.getPlaceTypes()).map(type => placesStrings[type]) : []
+                                types: place.getPlaceTypes ? utils.ad.collections.stringSetToStringArray(place.getPlaceTypes()).map(type => placesStrings[type]) : [],
+                                coordinates: place.getLatLng ? {
+                                    latitude: place.getLatLng().latitude,
+                                    longitude: place.getLatLng().longitude
+                                } : null,
+                                viewport: place.getViewport ? {
+                                    northEast: {
+                                        latitude: place.getViewport().northeast.latitude,
+                                        longitude: place.getViewport().northeast.longitude
+                                    },
+                                    southWest: {
+                                        latitude: place.getViewport().southwest.latitude,
+                                        longitude: place.getViewport().southwest.longitude
+                                    }
+                                } : null
                             });
                         }
 
