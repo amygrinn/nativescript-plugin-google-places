@@ -19,8 +19,8 @@ export function pickPlace(viewport: Viewport): Promise<Place> {
             let builder = new com.google.android.gms.location.places.ui.PlacePicker.IntentBuilder();
 
             if(viewport) {
-                let southWest = new com.google.android.gms.maps.model.LatLong(viewport.southWest.latitude, viewport.southWest.longitude);
-                let northEast = new com.google.android.gms.maps.model.LatLong(viewport.northEast.latitude, viewport.northEast.longitude);
+                let southWest = new com.google.android.gms.maps.model.LatLng(viewport.southWest.latitude, viewport.southWest.longitude);
+                let northEast = new com.google.android.gms.maps.model.LatLng(viewport.northEast.latitude, viewport.northEast.longitude);
 
                 let latLngBounds = new com.google.android.gms.maps.model.LatLngBounds(southWest, northEast);
 
